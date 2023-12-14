@@ -3,16 +3,15 @@ package fr.sdv.m1axelalbert.petstore;
 import fr.sdv.m1axelalbert.petstore.entite.*;
 import fr.sdv.m1axelalbert.petstore.enumeration.FishLivEnv;
 import fr.sdv.m1axelalbert.petstore.enumeration.ProdType;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        startingApp();
         try (EntityManagerFactory emf = Persistence.createEntityManagerFactory("petStore");
              EntityManager em = emf.createEntityManager();){
             EntityTransaction et  = em.getTransaction();
@@ -38,7 +37,6 @@ public class Main {
             Fish fish2 = new Fish(LocalDate.now(), "Silver", null, FishLivEnv.SEA_WATER);
             Fish fish3 = new Fish(LocalDate.now(), "Blue", null, FishLivEnv.FRESH_WATER);
 
-
             // Création petStore
             PetStore petStore1 = new PetStore("PetStore 1", "Manager 1", Arrays.asList(product1, product2), address1, Arrays.asList(cat1, fish1));
             PetStore petStore2 = new PetStore("PetStore 2", "Manager 2", Arrays.asList(product2, product3), address2, Arrays.asList(cat2, fish2));
@@ -59,6 +57,35 @@ public class Main {
 
             // Commit en BDD
             et.commit();
+
+            // Récupération des animaux
+            TypedQuery<Animal> query = em.createQuery("SELECT a FROM Animal a WHERE a.petStore = :petStore", Animal.class);
+            query.setParameter("petStore",petStore1);
+            List<Animal> animals = query.getResultList();
+
+            // affichage système
+            System.out.println("Les animaux présents dans le petStore nommé " + petStore1.getName() + " sont :");
+            animals.forEach(System.out::println);
         }
+    }
+
+    private static void startingApp() {
+        System.out.println("───────────────────────────────────────\n" +
+                "───▐▀▄───────▄▀▌───▄▄▄▄▄▄▄─────────────\n" +
+                "───▌▒▒▀▄▄▄▄▄▀▒▒▐▄▀▀▒██▒██▒▀▀▄──────────\n" +
+                "──▐▒▒▒▒▀▒▀▒▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▀▄────────\n" +
+                "──▌▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▄▒▒▒▒▒▒▒▒▒▒▒▒▀▄──────\n" +
+                "▀█▒▒▒█▌▒▒█▒▒▐█▒▒▒▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▌─────\n" +
+                "▀▌▒▒▒▒▒▒▀▒▀▒▒▒▒▒▒▀▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▐───▄▄\n" +
+                "▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▌▄█▒█\n" +
+                "▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒█▀─\n" +
+                "▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▀───\n" +
+                "▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▌────\n" +
+                "─▌▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▐─────\n" +
+                "─▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▌─────\n" +
+                "──▌▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▐──────\n" +
+                "──▐▄▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▄▌──────\n" +
+                "────▀▄▄▀▀▀▀▀▄▄▀▀▀▀▀▀▀▄▄▀▀▀▀▀▄▄▀────────\n" +
+                "PetStore la meilleure Appli pour faire garder ton chat <3");
     }
 }
